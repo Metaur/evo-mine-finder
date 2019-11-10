@@ -1,127 +1,202 @@
 import {deduce, nextMoves} from './service';
-import {genMap} from './map';
+import {parseMap} from '../utils';
+import {getFlags} from '../testUtils';
 
 describe('service', () => {
 
   it('scen 1', () => {
-    const map = genMap('map:\n' +
+    const cells = parseMap('map:\n' +
       '1□\n' +
       '11\n');
-    nextMoves(map);
+    const result = nextMoves(cells, getFlags(cells));
 
-    expect(map.isFlaggedByPos(1, 0)).toBeTruthy();
+    expect(result).toBeTruthy();
+    expect(result!.toFlag).toContainEqual({
+      x: 1,
+      y: 0
+    });
   });
 
   it('scen 2', () => {
-    const map = genMap('map:\n' +
+    const cells = parseMap('map:\n' +
       '□□□□□\n' +
       '11122\n');
-    nextMoves(map);
+    const result = nextMoves(cells, getFlags(cells));
 
-    expect(map.isFlaggedByPos(3, 0)).toBeTruthy();
-    expect(map.isFlaggedByPos(4, 0)).toBeTruthy();
-
-    nextMoves(map);
-
-    expect(map.cells[0][2].isToOpen()).toBeTruthy();
+    expect(result).toBeTruthy();
+    expect(result!.toFlag).toContainEqual({
+      x: 3,
+      y: 0
+    });
+    expect(result!.toFlag).toContainEqual({
+      x: 4,
+      y: 0
+    });
   });
 
   it('scen 3', () => {
-    const map = genMap('map:\n' +
+    const cells = parseMap('map:\n' +
       '1□\n' +
       '2□\n' +
       '1□\n');
-    map.setFlagByPos(1, 0, true);
-    map.setFlagByPos(1, 2, true);
-    nextMoves(map);
+    const flags = getFlags(cells);
+    flags[0][1] = true;
+    flags[2][1] = true;
+    const result = nextMoves(cells, flags);
 
-    expect(map.cells[1][1].isToOpen()).toBeTruthy();
+    expect(result).toBeTruthy();
+    expect(result!.toOpen).toContainEqual({
+      x: 1,
+      y: 1
+    });
   });
 
   it('scen 4', () => {
-    const map = genMap('map:\n' +
+    const cells = parseMap('map:\n' +
       '□00\n' +
       '010\n' +
       '00□\n');
-    map.setFlagByPos(2, 2, true);
-    nextMoves(map);
+    const flags = getFlags(cells);
+    flags[2][2] = true;
+    const result = nextMoves(cells, flags);
 
-    expect(map.cells[0][0].isToOpen()).toBeTruthy();
+    expect(result).toBeTruthy();
+    expect(result!.toOpen).toContainEqual({
+      x: 0,
+      y: 0
+    });
   });
 
   it('scen 5', () => {
-    const map = genMap('map:\n' +
+    const cells = parseMap('map:\n' +
       '□1\n' +
       '□2\n' +
       '□1\n');
-    map.setFlagByPos(0, 1, true);
-    map.setFlagByPos(0, 2, true);
-    nextMoves(map);
+    const flags = getFlags(cells);
+    flags[1][0] = true;
+    flags[2][0] = true;
+    const result = nextMoves(cells, flags);
 
-    expect(map.cells[0][0].isToOpen()).toBeTruthy();
+    expect(result).toBeTruthy();
+    expect(result!.toOpen).toContainEqual({
+      x: 0,
+      y: 0
+    });
   });
 
   it('scen 6', () => {
-    const map = genMap('map:\n' +
+    const cells = parseMap('map:\n' +
       '□□□\n' +
       '□1□\n' +
       '□□□\n');
-    map.setFlagByPos(0, 0, true);
-    nextMoves(map);
+    const flags = getFlags(cells);
+    flags[0][0] = true;
+    const result = nextMoves(cells, flags);
 
-    expect(map.cells[0][1].isToOpen()).toBeTruthy();
-    expect(map.cells[0][2].isToOpen()).toBeTruthy();
-    expect(map.cells[1][0].isToOpen()).toBeTruthy();
-    expect(map.cells[1][2].isToOpen()).toBeTruthy();
-    expect(map.cells[2][0].isToOpen()).toBeTruthy();
-    expect(map.cells[2][1].isToOpen()).toBeTruthy();
-    expect(map.cells[2][2].isToOpen()).toBeTruthy();
+    expect(result).toBeTruthy();
+    expect(result!.toOpen).toContainEqual({
+      x: 1,
+      y: 0
+    });
+    expect(result!.toOpen).toContainEqual({
+      x: 2,
+      y: 0
+    });
+    expect(result!.toOpen).toContainEqual({
+      x: 0,
+      y: 1
+    });
+    expect(result!.toOpen).toContainEqual({
+      x: 2,
+      y: 1
+    });
+    expect(result!.toOpen).toContainEqual({
+      x: 0,
+      y: 2
+    });
+    expect(result!.toOpen).toContainEqual({
+      x: 1,
+      y: 2
+    });
+    expect(result!.toOpen).toContainEqual({
+      x: 2,
+      y: 2
+    });
   });
 
   it('scen 7', () => {
-    const map = genMap('map:\n' +
+    const cells = parseMap('map:\n' +
       '□2□\n' +
       '1□□\n' +
       '□□□\n');
-    map.setFlagByPos(0, 0, true);
-    nextMoves(map);
+    const flags = getFlags(cells);
+    flags[0][0] = true;
+    const result = nextMoves(cells, flags);
 
-    expect(map.cells[0][2].isToOpen()).toBeFalsy();
+    expect(result).toBeTruthy();
+    expect(result!.toOpen).not.toContainEqual({
+      x: 2,
+      y: 0
+    });
 
-    expect(map.cells[1][1].isToOpen()).toBeTruthy();
-    expect(map.cells[2][0].isToOpen()).toBeTruthy();
-    expect(map.cells[2][1].isToOpen()).toBeTruthy();
+    expect(result!.toOpen).toContainEqual({
+      x: 1,
+      y: 1
+    });
+    expect(result!.toOpen).toContainEqual({
+      x: 0,
+      y: 2
+    });
+    expect(result!.toOpen).toContainEqual({
+      x: 1,
+      y: 2
+    });
   });
 
   it('deduce 1', () => {
-    const map = genMap('map:\n' +
+    const cells = parseMap('map:\n' +
       '□□\n' +
       '□3\n' +
       '□2\n' +
       '□1\n');
-    map.setFlagByPos(0, 0, true);
-    map.setFlagByPos(1, 0, true);
+    const flags = getFlags(cells);
+    flags[0][0] = true;
+    flags[0][1] = true;
+    expect(nextMoves(cells, flags)).toBeFalsy();
+    const result = deduce(cells, flags);
 
-    expect(nextMoves(map)).toBeFalsy();
-    deduce(map);
-
-    expect(map.isFlaggedByPos(0, 1)).toBeTruthy();
-    expect(map.isFlaggedByPos(0, 3)).toBeTruthy();
+    expect(result).toBeTruthy();
+    expect(result!.toFlag).toContainEqual({
+      x: 0,
+      y: 1
+    });
+    expect(result!.toFlag).toContainEqual({
+      x: 0,
+      y: 3
+    });
   });
 
   it('deduce 2', () => {
-    const map = genMap('map:\n' +
+    const cells = parseMap('map:\n' +
       '□□□1\n' +
       '□□22\n' +
       '2□2□\n' +
       '1□21\n');
-    map.setFlagByPos(0, 1, true);
-    map.setFlagByPos(3, 2, true);
+    const flags = getFlags(cells);
+    flags[1][0] = true;
+    flags[2][3] = true;
+    const result = deduce(cells, flags);
 
-    deduce(map);
+    expect(result).toBeTruthy();
 
-    expect(map.isFlaggedByPos(2, 0)).toBeTruthy();
-    expect(map.isFlaggedByPos(1, 3)).toBeTruthy();
+    expect(result!.toFlag).toContainEqual({
+      x: 2,
+      y: 0
+    });
+    expect(result!.toFlag).toContainEqual({
+      x: 1,
+      y: 3
+    });
   });
 
 });

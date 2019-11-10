@@ -20,8 +20,8 @@ export function nextMoves(cells: Cell[][], flags: boolean[][]) {
     if (closedNearby.length - flaggedNearby === bombsAround - flaggedNearby && closedNearby.length - flaggedNearby > 0) {
       closedNearby
         .filter(c => !flags[c.y][c.x])
-        .forEach(c => {
-          toFlag.push(c);
+        .forEach(({x, y}) => {
+          toFlag.push({x, y});
           flaggedNearby++;
         });
       console.log('Set flag');
@@ -30,7 +30,7 @@ export function nextMoves(cells: Cell[][], flags: boolean[][]) {
     if (bombsAround - flaggedNearby === 0 && closedNearby.length - flaggedNearby > 0) {
       closedNearby
         .filter(c => !flags[c.y][c.x])
-        .forEach(c => toOpen.push(c));
+        .forEach(({x, y}) => toOpen.push({x, y}));
       console.log('Set to open');
     }
   });

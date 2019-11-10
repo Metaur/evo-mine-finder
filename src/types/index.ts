@@ -1,5 +1,4 @@
 import {ActionType} from './actionTypes';
-import {Dispatch} from 'redux';
 import {ThunkDispatch} from 'redux-thunk';
 
 export type GameType = 1 | 2 | 3 | 4;
